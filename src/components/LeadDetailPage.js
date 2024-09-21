@@ -1,26 +1,38 @@
+import { useState, useEffect } from "react";
+
 import { InfoIcon } from "@chakra-ui/icons";
 import { Flex, Heading, List, ListItem, Text } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 
 import RedirectionButton from "./RedirectionButton";
-import { LEADS } from "../constants/paths";
+import { LEAD_ENROLLMENT } from "../constants/paths";
 
-const LeadDetailPage = () => {
+const enrollmentDetailPage = () => {
+  const [enrollment, setEnrollment] = useState([]);
+
   const { id } = useParams();
 
-  console.log("id:", id);
+  useEffect(() => {
+    const fetchEnrollmentRecord = async () => {
+      try {
+        const response = await fetch(
+          `http://${process.env.REACT_APP_URL_BASE}/records/${id}`
+        );
 
-  const lead = {
-    id: "2",
-    fullName: "Juan Pérez",
-    email: "juan@example.com",
-    address: "123 Street, City",
-    subject: "Mathematics",
-    courseDuration: "6 months",
-    career: "Engineering",
-    enrollmentYear: 2023,
-    numberOfTimesEnrolled: 1,
-  };
+        if (!response.ok) {
+          throw new Error(`Failed during fetch: ${response.error}`);
+        }
+
+        const data = await response.json();
+
+        setEnrollment([data]);
+      } catch (error) {
+        throw new Error(`There was an error: ${error}`);
+      }
+    };
+
+    fetchEnrollmentRecord();
+  }, [id]);
 
   return (
     <Flex
@@ -34,59 +46,72 @@ const LeadDetailPage = () => {
       <Flex align="center">
         <InfoIcon boxSize="26px" color="blue.500" />
         <Heading fontSize="30px" ml="8px">
-          Lead Details
+          Lead Enrollment to Subject Details
         </Heading>
       </Flex>
+
       <List spacing="20px">
-        <ListItem display="flex" alignItems="center">
-          <Text>
-            <strong>ID:</strong> {lead.id}
-          </Text>
-        </ListItem>
-        <ListItem display="flex" alignItems="center">
-          <Text>
-            <strong>Full Name:</strong> {lead.fullName}
-          </Text>
-        </ListItem>
-        <ListItem display="flex" alignItems="center">
-          <Text>
-            <strong>Email:</strong> {lead.email}
-          </Text>
-        </ListItem>
-        <ListItem display="flex" alignItems="center">
-          <Text>
-            <strong>Address:</strong> {lead.address}
-          </Text>
-        </ListItem>
-        <ListItem display="flex" alignItems="center">
-          <Text>
-            <strong>Subject:</strong> {lead.subject}
-          </Text>
-        </ListItem>
-        <ListItem display="flex" alignItems="center">
-          <Text>
-            <strong>Course Duration:</strong> {lead.courseDuration}
-          </Text>
-        </ListItem>
-        <ListItem display="flex" alignItems="center">
-          <Text>
-            <strong>Career:</strong> {lead.career}
-          </Text>
-        </ListItem>
-        <ListItem display="flex" alignItems="center">
-          <Text>
-            <strong>Enrollment Year:</strong> {lead.enrollmentYear}
-          </Text>
-        </ListItem>
-        <ListItem display="flex" alignItems="center">
-          <Text>
-            <strong>Times Enrolled:</strong> {lead.numberOfTimesEnrolled}
-          </Text>
-        </ListItem>
+        {enrollment.map((enrollmentItem) => (
+          <>
+            <ListItem display="flex" alignItems="center">
+              <Text>
+                <strong>ID:</strong> {enrollmentItem.id}
+              </Text>
+            </ListItem>
+            <ListItem display="flex" alignItems="center">
+              <Text>
+                <strong>Full Name:</strong> {enrollmentItem.name}
+              </Text>
+            </ListItem>
+            <ListItem display="flex" alignItems="center">
+              <Text>
+                <strong>Email:</strong> {enrollmentItem.email}
+              </Text>
+            </ListItem>
+            <ListItem display="flex" alignItems="center">
+              <Text>
+                <strong>Phone:</strong> {enrollmentItem.phone}
+              </Text>
+            </ListItem>
+            <ListItem display="flex" alignItems="center">
+              <Text>
+                <strong>Address:</strong> {enrollmentItem.address}
+              </Text>
+            </ListItem>
+            <ListItem display="flex" alignItems="center">
+              <Text>
+                <strong>Subject:</strong> {enrollmentItem.subject}
+              </Text>
+            </ListItem>
+            <ListItem display="flex" alignItems="center">
+              <Text>
+                <strong>Course Duration: </strong>{" "}
+                {enrollmentItem.class_duration} hours
+              </Text>
+            </ListItem>
+            <ListItem display="flex" alignItems="center">
+              <Text>
+                <strong>Times Enrolled:</strong> {enrollmentItem.enroll_times}{" "}
+                times
+              </Text>
+            </ListItem>
+            <ListItem display="flex" alignItems="center">
+              <Text>
+                <strong>Career:</strong>{" "}
+                {enrollmentItem.career.replace(/_/g, " ")}
+              </Text>
+            </ListItem>
+            <ListItem display="flex" alignItems="center">
+              <Text>
+                <strong>Enrollment Year:</strong> {enrollmentItem.year_enroll}
+              </Text>
+            </ListItem>
+          </>
+        ))}
       </List>
-      <RedirectionButton text="Go to Leads List" path={LEADS} />
+      <RedirectionButton text="Go to Enrollment List" path={LEAD_ENROLLMENT} />
     </Flex>
   );
 };
 
-export default LeadDetailPage;
+export default enrollmentDetailPage;

@@ -1,35 +1,32 @@
-import { ChakraProvider } from "@chakra-ui/react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import HomePage from "./components/HomePage";
 import SuccessPage from "./components/SuccessPage";
-import LeadList from "./components/LeadList";
+import LeadEnrollmentPage from "./components/LeadEnrollmentPage";
 import LeadDetailPage from "./components/LeadDetailPage";
-import RegistrationPage from "./components/RegistrationPage";
+import EnrollmentPage from "./components/EnrollmentPage";
 import NotFoundPage from "./components/NotFoundPage";
 import {
   HOME,
   NOT_FOUND,
-  REGISTRATION,
+  ENROLL,
   LEAD,
-  LEADS,
+  LEAD_ENROLLMENT,
   SUCCESS,
 } from "./constants/paths";
 
 function App() {
   return (
-    <ChakraProvider>
-      <Router>
-        <Routes>
-          <Route path={HOME} element={<HomePage />} />
-          <Route path={LEADS} element={<LeadList />} />
-          <Route path={LEAD} element={<LeadDetailPage />} />
-          <Route path={REGISTRATION} element={<RegistrationPage />} />
-          <Route path={SUCCESS} element={<SuccessPage />} />
-          <Route path={NOT_FOUND} element={<NotFoundPage />} />
-        </Routes>
-      </Router>
-    </ChakraProvider>
+    <Router>
+      <Routes>
+        <Route path={HOME} element={<HomePage />} />
+        <Route path={LEAD_ENROLLMENT} element={<LeadEnrollmentPage />} />
+        <Route path={LEAD} element={<LeadDetailPage />} />
+        <Route path={ENROLL} element={<EnrollmentPage />} />
+        <Route path={SUCCESS} element={<SuccessPage />} />
+        <Route path={NOT_FOUND} element={<NotFoundPage />} />
+      </Routes>
+    </Router>
   );
 }
 

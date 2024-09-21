@@ -14,27 +14,29 @@ import {
 import { HOME } from "../constants/paths";
 import RedirectionButton from "./RedirectionButton";
 
-const LeadForm = () => {
+const EnrollmentForm = () => {
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
+    dni: "",
     email: "",
+    phone: "",
     address: "",
     subject: "",
-    courseDuration: "",
+    enrollTimes: "",
     career: "",
-    enrollmentYear: "",
-    numberOfTimesEnrolled: "",
+    yearEnroll: "",
   });
 
   const [errors, setErrors] = useState({
-    fullName: "",
+    name: "",
+    dni: "",
     email: "",
+    phone: "",
     address: "",
     subject: "",
-    courseDuration: "",
+    enrollTimes: "",
     career: "",
-    enrollmentYear: "",
-    numberOfTimesEnrolled: "",
+    yearEnroll: "",
   });
 
   const navigate = useNavigate();
@@ -50,19 +52,27 @@ const LeadForm = () => {
     return emailRegex.test(String(email).toLowerCase());
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
 
-    if (!formData.fullName) {
-      newErrors.fullName = "Required";
+    if (!formData.name) {
+      newErrors.name = "Required";
     }
 
     if (!formData.email) {
       newErrors.email = "Required";
     } else if (!validateEmail(formData.email)) {
       newErrors.email = "Invalid email format";
+    }
+
+    if (!formData.phone) {
+      newErrors.phone = "Required";
+    }
+
+    if (!formData.dni) {
+      newErrors.dni = "Required";
     }
 
     if (!formData.address) {
@@ -73,20 +83,16 @@ const LeadForm = () => {
       newErrors.subject = "Required";
     }
 
-    if (!formData.courseDuration) {
-      newErrors.courseDuration = "Required";
+    if (!formData.enrollTimes) {
+      newErrors.enrollTimes = "Required";
     }
 
     if (!formData.career) {
       newErrors.career = "Required";
     }
 
-    if (!formData.enrollmentYear) {
-      newErrors.enrollmentYear = "Required";
-    }
-
-    if (!formData.numberOfTimesEnrolled) {
-      newErrors.numberOfTimesEnrolled = "Required";
+    if (!formData.yearEnroll) {
+      newErrors.yearEnroll = "Required";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -94,22 +100,53 @@ const LeadForm = () => {
       return;
     }
 
-    const generatedId = Math.floor(Math.random() * 10000); // Genera un ID aleatorio
-    navigate(`/success?id=${generatedId}`);
+    try {
+      const response = await fetch(
+        `http://${process.env.REACT_APP_URL_BASE}/records`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`Failed during fetch: ${response.error}`);
+      }
+
+      navigate(`/success?id=${data.id}`);
+    } catch (error) {
+      throw new Error(`Failed during fetch: ${error}`);
+    }
   };
 
   return (
     <Box w="350px">
       <form onSubmit={handleSubmit}>
-        <FormControl id="fullName" mb="16px" isInvalid={!!errors.fullName}>
+        <FormControl id="name" mb="16px" isInvalid={!!errors.name}>
           <FormLabel>Full Name</FormLabel>
           <Input
-            name="fullName"
-            value={formData.fullName}
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             type="text"
           />
-          {errors.fullName && <Text color="red.500">{errors.fullName}</Text>}
+          {errors.name && <Text color="red.500">{errors.name}</Text>}
+        </FormControl>
+
+        <FormControl id="dni" mb="16px" isInvalid={!!errors.dni}>
+          <FormLabel>DNI</FormLabel>
+          <Input
+            name="dni"
+            value={formData.dni}
+            onChange={handleChange}
+            type="text"
+          />
+          {errors.dni && <Text color="red.500">{errors.dni}</Text>}
         </FormControl>
 
         <FormControl id="email" mb="16px" isInvalid={!!errors.email}>
@@ -121,6 +158,17 @@ const LeadForm = () => {
             type="email"
           />
           {errors.email && <Text color="red.500">{errors.email}</Text>}
+        </FormControl>
+
+        <FormControl id="phone" mb="16px" isInvalid={!!errors.phone}>
+          <FormLabel>Phone</FormLabel>
+          <Input
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            type="text"
+          />
+          {errors.phone && <Text color="red.500">{errors.phone}</Text>}
         </FormControl>
 
         <FormControl id="address" mb="16px" isInvalid={!!errors.address}>
@@ -146,19 +194,19 @@ const LeadForm = () => {
         </FormControl>
 
         <FormControl
-          id="courseDuration"
+          id="enrollTimes"
           mb="16px"
-          isInvalid={!!errors.courseDuration}
+          isInvalid={!!errors.enrollTimes}
         >
-          <FormLabel>Course Duration</FormLabel>
+          <FormLabel>Number of Times Enrolled</FormLabel>
           <Input
-            name="courseDuration"
-            value={formData.courseDuration}
+            name="enrollTimes"
+            value={formData.enrollTimes}
             onChange={handleChange}
-            type="text"
+            type="number"
           />
-          {errors.courseDuration && (
-            <Text color="red.500">{errors.courseDuration}</Text>
+          {errors.enrollTimes && (
+            <Text color="red.500">{errors.enrollTimes}</Text>
           )}
         </FormControl>
 
@@ -173,37 +221,16 @@ const LeadForm = () => {
           {errors.career && <Text color="red.500">{errors.career}</Text>}
         </FormControl>
 
-        <FormControl
-          id="enrollmentYear"
-          mb="16px"
-          isInvalid={!!errors.enrollmentYear}
-        >
+        <FormControl id="yearEnroll" mb="16px" isInvalid={!!errors.yearEnroll}>
           <FormLabel>Enrollment Year</FormLabel>
           <Input
-            name="enrollmentYear"
-            value={formData.enrollmentYear}
+            name="yearEnroll"
+            value={formData.yearEnroll}
             onChange={handleChange}
             type="text"
           />
-          {errors.enrollmentYear && (
-            <Text color="red.500">{errors.enrollmentYear}</Text>
-          )}
-        </FormControl>
-
-        <FormControl
-          id="numberOfTimesEnrolled"
-          mb="16px"
-          isInvalid={!!errors.numberOfTimesEnrolled}
-        >
-          <FormLabel>Number of Times Enrolled</FormLabel>
-          <Input
-            name="numberOfTimesEnrolled"
-            value={formData.numberOfTimesEnrolled}
-            onChange={handleChange}
-            type="number"
-          />
-          {errors.numberOfTimesEnrolled && (
-            <Text color="red.500">{errors.numberOfTimesEnrolled}</Text>
+          {errors.yearEnroll && (
+            <Text color="red.500">{errors.yearEnroll}</Text>
           )}
         </FormControl>
 
@@ -219,4 +246,4 @@ const LeadForm = () => {
   );
 };
 
-export default LeadForm;
+export default EnrollmentForm;

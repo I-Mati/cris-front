@@ -1,6 +1,6 @@
 import { Flex, VStack, Heading } from "@chakra-ui/react";
 
-import { REGISTRATION, LEADS } from "../constants/paths";
+import { ENROLL, LEAD_ENROLLMENT } from "../constants/paths";
 import RedirectionButton from "./RedirectionButton";
 
 const HomePage = () => {
@@ -12,13 +12,13 @@ const HomePage = () => {
         </Heading>
         <RedirectionButton
           colorScheme="teal"
-          text="Go to Lead List"
-          path={LEADS}
+          text="Go to Leads' Enrollment List"
+          path={LEAD_ENROLLMENT}
         />
         <RedirectionButton
           colorScheme="teal"
-          text="Go to Registration Form"
-          path={REGISTRATION}
+          text="Go to Enrollment Form"
+          path={ENROLL}
         />
       </VStack>
     </Flex>
