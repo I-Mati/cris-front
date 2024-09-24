@@ -85,6 +85,8 @@ const EnrollmentForm = () => {
 
     if (!formData.enrollTimes) {
       newErrors.enrollTimes = "Required";
+    } else if (isNaN(parseInt(formData.enrollTimes))) {
+      newErrors.enrollTimes = "Must be a number";
     }
 
     if (!formData.career) {
@@ -93,12 +95,20 @@ const EnrollmentForm = () => {
 
     if (!formData.yearEnroll) {
       newErrors.yearEnroll = "Required";
+    } else if (isNaN(parseInt(formData.yearEnroll))) {
+      newErrors.yearEnroll = "Must be a valid year";
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
+
+    const formattedData = {
+      ...formData,
+      enroll_times: parseInt(formData.enrollTimes),
+      year_enroll: parseInt(formData.yearEnroll),
+    };
 
     try {
       const response = await fetch(
@@ -108,7 +118,7 @@ const EnrollmentForm = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(formattedData),
         }
       );
 
